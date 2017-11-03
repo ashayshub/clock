@@ -17,14 +17,13 @@ int draw_circle(WINDOW *mainwin, int width, int height, int radius){
 }
 
 /* int draw_hand(int x, ) */
-int draw_line(WINDOW *win, struct tm *timeinfo, int width, int height){
+int draw_line(WINDOW *win, float deg, int len_buff, int width, int height, char plot_char){
   struct coord {
     int x;
     int y;
   };
   struct coord line_coord;
 
-  float deg = (float) timeinfo->tm_sec*6;
   
   /* distance between two points: sqrt ([x1-x2]^2+[y1-y2]^2)*/
   float p = (width)^2;          /* I know, wrong */
@@ -32,12 +31,13 @@ int draw_line(WINDOW *win, struct tm *timeinfo, int width, int height){
   float radius = sqrt(p + q);
   
   
-  for (int i = 0; i < radius+8; i++){
+  for (int i = 0; i < radius+len_buff; i++){
     line_coord.x = width + (int)(i * cos(DEGTORAD(deg)));
     line_coord.y = height + (int)(i * sin(DEGTORAD(deg)));
-    mvwaddch(win, line_coord.y, line_coord.x, DOT);
+    mvwaddch(win, line_coord.y, line_coord.x, plot_char);
   }
-  printw("deg: %f, timeinsec: %d", deg, (int)timeinfo->tm_sec);
+  
+  //printw("deg: %f, timeinsec: %d", deg, (int)timeinfo->tm_sec);
   
   return 0;
 }
@@ -51,19 +51,31 @@ int plot_time(int width, int height){
   while (1){
     
     time(&rawtime);
-    /*Plot second, minute and hour hand for the clock*/
+    /* Plot second, minute and hour hand for the clock */
         
-    /*Plot base time in ASCII*/
+    /* Collect time information */
     timeinfo = localtime_r(&rawtime , &timeinfoBuffer);
     result = malloc(26 * sizeof(char));
     result = asctime_r(timeinfo, result);
 
-    WINDOW *win = newwin(0, 0, 0, 0);
-    draw_line(win, timeinfo, width, height);
-    wrefresh(win);
-    mvprintw(BASE_HEIGHT, BASE_WIDTH, "%s", result);
-    refresh();
+    /* Convert time information to corresponding degrees */
+    float seconds_deg = (float) timeinfo->tm_sec*6 - DEG_SHIFT;
+    float min_deg = (float) timeinfo->tm_min*6 - DEG_SHIFT;
+    float hour_deg = (float) timeinfo->tm_hour*30 - DEG_SHIFT;
+    
 
+    WINDOW *win = newwin(0, 0, 0, 0);
+    /* Draw Seconds hand */
+    draw_line(win, seconds_deg, 8, width, height, DOT);
+    /* Draw Minute hand */
+    draw_line(win, min_deg, 8, width, height, AT);
+    /* Draw hour hand */
+    draw_line(win, hour_deg, 8, width, height, HASH);
+    /* Print time     */
+    mvwprintw(win, BASE_HEIGHT, BASE_WIDTH, "%s", result);
+    wrefresh(win);
+    refresh();
+    
     sleep(ONE_SECOND);
     delwin(win);
     free(result);
