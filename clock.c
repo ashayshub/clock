@@ -39,7 +39,6 @@ int draw_line(WINDOW *win, float deg, int len_buff, int width, int height, char 
     int y;
   };
   struct coord line_coord;
-
   
   /* Distance between two points: sqrt ([x1-x2]^2+[y1-y2]^2)*/
   /* ToDo: correct and get proper distance */
@@ -53,8 +52,6 @@ int draw_line(WINDOW *win, float deg, int len_buff, int width, int height, char 
     line_coord.y = height + (int)(i * sin(DEGTORAD(deg)));
     mvwaddch(win, line_coord.y, line_coord.x, plot_char);
   }
-  
-  //printw("deg: %f, timeinsec: %d", deg, (int)timeinfo->tm_sec);
   
   return 0;
 }
@@ -92,6 +89,7 @@ int plot_time(int width, int height){
     draw_line(win, hour_deg, 8, width, height, AT);
     /* Print time     */
     mvwprintw(win, BASE_HEIGHT, BASE_WIDTH, "%s", result);
+    mvwprintw(win, BASE_HEIGHT+5, BASE_WIDTH, "PRESS CTRL+c to exit");
     wrefresh(win);
     
     sleep(ONE_SECOND);
