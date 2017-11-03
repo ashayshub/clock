@@ -96,10 +96,6 @@ int main(int argc, char **argv){
     exit(EXIT_FAILURE);
   }
 
-  WINDOW *mainwin = newwin(0,0, 0, 0);
-  draw_circle(mainwin, width, height, 10);
-  wrefresh(mainwin);
-  delwin(mainwin);
   plot_time(width, height);
 
   endwin();
