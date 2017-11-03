@@ -1,5 +1,21 @@
 #include "clock.h"
 
+void endwin_exit(void){
+  refresh();
+  endwin();
+  exit(EXIT_SUCCESS);
+}
+
+void sig_handler(int signo)
+{
+  if (signo == SIGUSR1){
+    endwin_exit();
+  }
+  else if (signo == SIGINT){
+    endwin_exit();
+  }
+}
+
 int draw_circle(WINDOW *mainwin, int width, int height, int radius){
   float deg;
   int x, y;
@@ -25,8 +41,9 @@ int draw_line(WINDOW *win, float deg, int len_buff, int width, int height, char 
   struct coord line_coord;
 
   
-  /* distance between two points: sqrt ([x1-x2]^2+[y1-y2]^2)*/
-  float p = (width)^2;          /* I know, wrong */
+  /* Distance between two points: sqrt ([x1-x2]^2+[y1-y2]^2)*/
+  /* ToDo: correct and get proper distance */
+  float p = (width)^2;
   float q = (height)^2;
   float radius = sqrt(p + q);
   
@@ -48,33 +65,34 @@ int plot_time(int width, int height){
   struct tm timeinfoBuffer;
   char *result;
 
-  while (1){
-    
+  /* Plot second, minute and hour hand for the clock */
+  while (signal(SIGINT, sig_handler) != SIG_ERR){
+  /* while (1){      */
     time(&rawtime);
-    /* Plot second, minute and hour hand for the clock */
         
-    /* Collect time information */
+    /* Collect time information, could be collected 
+       every seconds or 60 minutes along with a 
+       local counter variable depending on accuracy required */
     timeinfo = localtime_r(&rawtime , &timeinfoBuffer);
     result = malloc(26 * sizeof(char));
     result = asctime_r(timeinfo, result);
 
     /* Convert time information to corresponding degrees */
-    float seconds_deg = (float) timeinfo->tm_sec*6 - DEG_SHIFT;
-    float min_deg = (float) timeinfo->tm_min*6 - DEG_SHIFT;
-    float hour_deg = (float) timeinfo->tm_hour*30 - DEG_SHIFT;
+    float seconds_deg = (float) (timeinfo->tm_sec*SIXTY_PACER) - DEG_SHIFT;
+    float min_deg = (float) (timeinfo->tm_min*SIXTY_PACER) - DEG_SHIFT;
+    float hour_deg = (float) (timeinfo->tm_hour*HOURLY_PACER) - DEG_SHIFT;
     
 
     WINDOW *win = newwin(0, 0, 0, 0);
     /* Draw Seconds hand */
     draw_line(win, seconds_deg, 8, width, height, DOT);
     /* Draw Minute hand */
-    draw_line(win, min_deg, 8, width, height, AT);
+    draw_line(win, min_deg, 8, width, height, HASH);
     /* Draw hour hand */
-    draw_line(win, hour_deg, 8, width, height, HASH);
+    draw_line(win, hour_deg, 8, width, height, AT);
     /* Print time     */
     mvwprintw(win, BASE_HEIGHT, BASE_WIDTH, "%s", result);
     wrefresh(win);
-    refresh();
     
     sleep(ONE_SECOND);
     delwin(win);
@@ -86,6 +104,8 @@ int plot_time(int width, int height){
 
 
 int main(int argc, char **argv){
+  
+  /*Suitable height and width */
   int width = 43;
   int height = 15;
 
@@ -97,8 +117,5 @@ int main(int argc, char **argv){
   }
 
   plot_time(width, height);
-
-  endwin();
-  
-  return EXIT_SUCCESS;
+  endwin_exit();
 }
