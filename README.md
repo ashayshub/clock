@@ -1,3 +1,3 @@
 # Clock Simulation
 
-Fun simulation of an Analogue clock in ncurses
+WIP: A fun simulation of an Analogue clock in ncurses

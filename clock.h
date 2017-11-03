@@ -13,6 +13,6 @@
 #define BASE_WIDTH 31
 #define BASE_HEIGHT 32
 
-int draw_circle(int x_coord, int y_coord, int radius);
+int draw_circle(WINDOW *mainwin, int x_coord, int y_coord, int radius);
 int plot_time(int x, int y);
-int draw_line(int x, int y, float deg, int erase);
+int draw_line(WINDOW *win, struct tm *timeinfo, int x, int y);
