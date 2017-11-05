@@ -45,8 +45,7 @@ int draw_line(WINDOW *win, float deg, int len_buff, int width, int height, char 
   float p = (width)^2;
   float q = (height)^2;
   float radius = sqrt(p + q);
-  
-  
+
   for (int i = 0; i < radius+len_buff; i++){
     line_coord.x = width + (int)(i * cos(DEGTORAD(deg)));
     line_coord.y = height + (int)(i * sin(DEGTORAD(deg)));
