@@ -66,21 +66,26 @@ int plot_time(int width, int height){
   while (signal(SIGINT, sig_handler) != SIG_ERR){
   /* while (1){      */
     time(&rawtime);
-
     /* Collect time information, could be collected 
        every seconds or 60 minutes along with a 
        local counter variable depending on accuracy required */
     timeinfo = localtime_r(&rawtime , &timeinfoBuffer);
     result = malloc(26 * sizeof(char));
     result = asctime_r(timeinfo, result);
+    
+    /* Need 12 hour format */
     int hour = CONVHOUR(TWHOUR(timeinfo->tm_hour));
 
-    /* Convert time information to corresponding degrees */
+    /*
+      Fine grained shift in hour hand
+      hour hand moves every 15 min
+    */
+    float incr = timeinfo->tm_min*(0.5);
     
+    /* Convert time information to corresponding degrees */    
     float seconds_deg = (float) (timeinfo->tm_sec*SIXTY_PACER) - DEG_SHIFT;
     float min_deg = (float) (timeinfo->tm_min*SIXTY_PACER) - DEG_SHIFT;
-    float hour_deg = (float) (hour*HOURLY_PACER) - DEG_SHIFT;
-
+    float hour_deg = (float) (hour*HOURLY_PACER) + incr - DEG_SHIFT;
 
     WINDOW *win = newwin(0, 0, 0, 0);
     /* Draw Seconds hand */
@@ -90,7 +95,7 @@ int plot_time(int width, int height){
     /* Draw hour hand */
     draw_line(win, hour_deg, 8, width, height, AT);
     /* Print time     */
-    mvwprintw(win, BASE_HEIGHT, BASE_WIDTH, "%s", result);
+    mvwprintw(win, BASE_HEIGHT, BASE_WIDTH, "%s %f", result, hour_deg);
     mvwprintw(win, BASE_HEIGHT+5, BASE_WIDTH, "PRESS CTRL+c to exit");
     wrefresh(win);
 

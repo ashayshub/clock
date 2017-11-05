@@ -11,6 +11,7 @@
 #define TWHOUR(hour)  hour > 12 ? hour - 12 : hour
 #define CONVHOUR(hour)  hour == 0 ? 12 : hour
 
+/* ASCII Characters */
 #define HASH 35
 #define DOT 46
 #define AT 64
