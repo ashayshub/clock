@@ -16,9 +16,17 @@
 #define BASE_WIDTH 31
 #define BASE_HEIGHT 32
 #define DEG_SHIFT 90.0
+/* 
+For minute and second hand movement, 
+in one min/sec, min/sec hand moves 360/60 deg
+*/
 #define SIXTY_PACER 360/60
-/* ToDo: Make HOURLY_PACER MORE FINE GRAINED */
-#define HOURLY_PACER 360/12
+/*
+In one hour, hour hand moves 360/12 = 30 deg
+In one minute, hour hand moves 360/(12*60) = 30/60 = 0.5 deg
+In one second, hour hand moves 360/(12*60*60) = 1/120 deg
+*/
+#define HOURLY_PACER 1/120
 
 void endwin_exit(void);
 void sig_handler(int signo);
