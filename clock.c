@@ -65,10 +65,14 @@ int plot_time(int width, int height){
   /* Plot second, minute and hour hand for the clock */
   while (signal(SIGINT, sig_handler) != SIG_ERR){
   /* while (1){      */
+
+    /* 
+       Collect time information, could be collected 
+       every second or minute  along with a 
+       local counter variable depending on accuracy required 
+    */
+
     time(&rawtime);
-    /* Collect time information, could be collected 
-       every seconds or 60 minutes along with a 
-       local counter variable depending on accuracy required */
     timeinfo = localtime_r(&rawtime , &timeinfoBuffer);
     result = malloc(26 * sizeof(char));
     result = asctime_r(timeinfo, result);
