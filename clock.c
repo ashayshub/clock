@@ -95,7 +95,7 @@ int plot_time(int width, int height){
     /* Draw hour hand */
     draw_line(win, hour_deg, 8, width, height, AT);
     /* Print time     */
-    mvwprintw(win, BASE_HEIGHT, BASE_WIDTH, "%s %f", result, hour_deg);
+    mvwprintw(win, BASE_HEIGHT, BASE_WIDTH, "%s", result);
     mvwprintw(win, BASE_HEIGHT+5, BASE_WIDTH, "PRESS CTRL+c to exit");
     wrefresh(win);
 
