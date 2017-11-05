@@ -8,6 +8,9 @@
 #include <ncurses.h>
 
 #define DEGTORAD(deg) (deg * (M_PI/180.0f))
+#define TWHOUR(hour)  hour > 12 ? hour - 12 : hour
+#define CONVHOUR(hour)  hour == 0 ? 12 : hour
+
 #define HASH 35
 #define DOT 46
 #define AT 64
@@ -15,18 +18,18 @@
 #define ONE_SECOND 1
 #define BASE_WIDTH 31
 #define BASE_HEIGHT 32
-#define DEG_SHIFT 90.0
+#define DEG_SHIFT 90.0f
 /* 
 For minute and second hand movement, 
 in one min/sec, min/sec hand moves 360/60 deg
 */
-#define SIXTY_PACER 360/60
+#define SIXTY_PACER 360/60.0f
 /*
 In one hour, hour hand moves 360/12 = 30 deg
 In one minute, hour hand moves 360/(12*60) = 30/60 = 0.5 deg
 In one second, hour hand moves 360/(12*60*60) = 1/120 deg
 */
-#define HOURLY_PACER 1/120
+#define HOURLY_PACER 30.0f
 
 void endwin_exit(void);
 void sig_handler(int signo);
