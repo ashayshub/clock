@@ -17,8 +17,8 @@
 #define AT 64
 
 #define ONE_SECOND 1
-#define BASE_WIDTH 31
-#define BASE_HEIGHT 32
+#define BASE_WIDTH 32
+#define BASE_HEIGHT 0
 #define DEG_SHIFT 90.0f
 /* 
 For minute and second hand movement, 
@@ -35,5 +35,6 @@ In one second, hour hand moves 360/(12*60*60) = 1/120 deg
 void endwin_exit(void);
 void sig_handler(int signo);
 int draw_circle(WINDOW *mainwin, int x_coord, int y_coord, int radius);
-int plot_time(int x, int y);
+int plot_time(void);
 int draw_line(WINDOW *win, float deg, int len_buff, int x, int y, char plot_char);
+void get_time(struct tm *timeinfo, char *result);

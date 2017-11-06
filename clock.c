@@ -55,11 +55,14 @@ int draw_line(WINDOW *win, float deg, int len_buff, int width, int height, char 
   return 0;
 }
 
-int plot_time(int width, int height){
-  time_t rawtime;
+
+int plot_time(void){
+  int width = 30;
+  int height = 12;
   struct tm *timeinfo;
-  struct tm timeinfoBuffer;
   char *result;
+  time_t rawtime;
+  struct tm timeinfoBuffer;
 
   /* Plot second, minute and hour hand for the clock */
   while (signal(SIGINT, sig_handler) != SIG_ERR){
@@ -69,11 +72,10 @@ int plot_time(int width, int height){
        Collect time information, could be collected 
        every second or minute  along with a 
        local counter variable depending on accuracy required 
-    */
-
+    */    
     time(&rawtime);
     timeinfo = localtime_r(&rawtime , &timeinfoBuffer);
-    result = malloc(26 * sizeof(char));
+    result = malloc(26 * sizeof(char));    
     result = asctime_r(timeinfo, result);
     
     /* Need 12 hour format */
@@ -88,22 +90,30 @@ int plot_time(int width, int height){
     /* Convert time information to corresponding degrees */    
     float seconds_deg = (float) (timeinfo->tm_sec*SIXTY_PACER) - DEG_SHIFT;
     float min_deg = (float) (timeinfo->tm_min*SIXTY_PACER) - DEG_SHIFT;
-    float hour_deg = (float) (hour*HOURLY_PACER) + incr - DEG_SHIFT;
-
-    WINDOW *win = newwin(0, 0, 0, 0);
+    float hour_deg = (float) (hour*HOURLY_PACER) + incr - DEG_SHIFT;    
+    
+    /* Plot analog information */
+    WINDOW *win = newwin(30, 60, 0, 10);
+    wborder(win, '|', '|', '-', '-', '+', '+', '+', '+');
     /* Draw Seconds hand */
-    draw_line(win, seconds_deg, 8, width, height, DOT);
+    draw_line(win, seconds_deg, 5, width, height, DOT);
     /* Draw Minute hand */
-    draw_line(win, min_deg, 8, width, height, HASH);
+    draw_line(win, min_deg, 5, width, height, HASH);
     /* Draw hour hand */
-    draw_line(win, hour_deg, 8, width, height, AT);
+    draw_line(win, hour_deg, 5, width, height, AT);
     /* Print time     */
-    mvwprintw(win, BASE_HEIGHT, BASE_WIDTH, "%s", result);
-    mvwprintw(win, BASE_HEIGHT+5, BASE_WIDTH, "PRESS CTRL+c to exit");
+    WINDOW *win2 = newwin(5, 60, 25, 10);
+
+    /* Plot ASCII information */
+    wborder(win2, '|', '|', '-', '-', '+', '+', '+', '+');
+    mvwprintw(win2, BASE_HEIGHT+1, BASE_WIDTH-10, "%s", result);
+    mvwprintw(win2, BASE_HEIGHT+3, BASE_WIDTH-8, "Press Ctrl+c to exit");
     wrefresh(win);
+    wrefresh(win2);
 
     sleep(ONE_SECOND);
     delwin(win);
+    delwin(win2);
     free(result);
   }
 
@@ -114,16 +124,13 @@ int plot_time(int width, int height){
 int main(int argc, char **argv){
   
   /*Suitable height and width */
-  int width = 43;
-  int height = 15;
-
   
   /*  Initialize ncurses  */
   if ( initscr() == NULL ) {
     fprintf(stderr, "Error initialising ncurses.\n");
     exit(EXIT_FAILURE);
   }
-
-  plot_time(width, height);
+  noecho();
+  plot_time();
   endwin_exit();
 }
