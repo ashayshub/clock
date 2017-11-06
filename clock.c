@@ -93,7 +93,7 @@ int plot_time(void){
     float hour_deg = (float) (hour*HOURLY_PACER) + incr - DEG_SHIFT;    
     
     /* Plot analog information */
-    WINDOW *win = newwin(30, 60, 0, 10);
+    WINDOW *win = newwin(30, 60, 2, 20);
     wborder(win, '|', '|', '-', '-', '+', '+', '+', '+');
     /* Draw Seconds hand */
     draw_line(win, seconds_deg, 5, width, height, DOT);
@@ -102,7 +102,7 @@ int plot_time(void){
     /* Draw hour hand */
     draw_line(win, hour_deg, 5, width, height, AT);
     /* Print time     */
-    WINDOW *win2 = newwin(5, 60, 25, 10);
+    WINDOW *win2 = newwin(5, 60, 27, 20);
 
     /* Plot ASCII information */
     wborder(win2, '|', '|', '-', '-', '+', '+', '+', '+');
